@@ -79,6 +79,7 @@ platform_do_upgrade() {
 	gatonetworks,gdsp|\
 	h3c,magic-nx30-pro|\
 	imou,lc-hx3001|\
+        ikuai,q6000|\
 	jcg,q30-pro|\
 	jdcloud,re-cp-03|\
 	konka,komi-a31|\
