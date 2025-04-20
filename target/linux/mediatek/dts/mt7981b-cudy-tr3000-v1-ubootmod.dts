@@ -4,7 +4,7 @@
 #include "mt7981b-cudy-tr3000-v1.dtsi"
 
 / {
-	model = "Cudy TR3000 v1 (OpenWrt U-Boot layout)";
+	model = "Cudy TR3000 v1 512MB rom versions";
 	compatible = "cudy,tr3000-v1-ubootmod", "mediatek,mt7981";
 };
 
