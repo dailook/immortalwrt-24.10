@@ -1,31 +1,24 @@
 <img src="https://avatars.githubusercontent.com/u/53193414?s=200&v=4" alt="logo" width="200" height="200" align="right">
 
-# Project ImmortalWrt
+# Project ImmortalWrt 24.10
 
-ImmortalWrt is a fork of [OpenWrt](https://openwrt.org), with more packages ported, more devices supported, default optimized profiles and localization modifications for mainland China users.<br/>
-Compared to upstream, we allow to use (non-upstreamable) modifications/hacks to provide better feature/performance/support.
+ImmortalWrt 是OpenWrt的一个分支，它移植了更多软件包，支持更多设备，默认优化了配置文件，并针对中国大陆用户进行了本地化修改。
+与上游版本相比，我们允许使用（非上游版本）修改/hack 来提供更好的功能/性能/支持。
 
-Default login address: http://192.168.2.1 or http://immortalwrt.lan, username: __root__, password: _none_.
+默认登录地址：http://192.168.2.1 或 http://immortalwrt.lan  用户名：root  密码：
 
-## Download
-Built firmware images are available for many architectures and come with a package selection to be used as WiFi home router. To quickly find a factory image usable to migrate from a vendor stock firmware to ImmortalWrt, try the *Firmware Selector*.
+## 发展
+要构建您自己的固件，您需要 GNU/Linux、BSD 或 macOS 系统（需要区分大小写的文件系统）。由于 Cygwin 不支持区分大小写的文件系统，因此不支持。
 
-- [ImmortalWrt Firmware Selector](https://firmware-selector.immortalwrt.org/)
+  ### 要求
+  要构建此项目，建议使用 Debian 11 and ubuntu 18-22.04系统。您需要使用基于 AMD64 架构的 CPU、至少 4GB 内存和 25GB 可用磁盘空间。请确保互联网连接畅通。
 
-If your device is supported, please follow the **Info** link to see install instructions or consult the support resources listed below.
+  编译 ImmortalWrt 需要以下工具，不同发行版的包名称有所不同。
 
-## Development
-To build your own firmware you need a GNU/Linux, BSD or macOS system (case sensitive filesystem required). Cygwin is unsupported because of the lack of a case sensitive file system.<br/>
-
-  ### Requirements
-  To build with this project, Debian 11 is preferred. And you need use the CPU based on AMD64 architecture, with at least 4GB RAM and 25 GB available disk space. Make sure the __Internet__ is accessible.
-
-  The following tools are needed to compile ImmortalWrt, the package names vary between distributions.
-
-  - Here is an example for Debian/Ubuntu users:<br/>
-    - Method 1:
+  - 以下是 Debian/Ubuntu 用户的示例：<br/>
+    - 方法 1：
       <details>
-        <summary>Setup dependencies via APT</summary>
+        <summary>通过APT设置依赖项</summary>
 
         ```bash
         sudo apt update -y
@@ -40,54 +33,45 @@ To build your own firmware you need a GNU/Linux, BSD or macOS system (case sensi
           upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
         ```
       </details>
-    - Method 2:
+    - 方法 2：
       ```bash
       sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.org/init_build_environment.sh)'
       ```
 
-  Note:
-  - Do everything as an unprivileged user, not root, without sudo.
-  - Using CPUs based on other architectures should be fine to compile ImmortalWrt, but more hacks are needed - No warranty at all.
-  - You must __not__ have spaces or non-ascii characters in PATH or in the work folders on the drive.
-  - If you're using Windows Subsystem for Linux (or WSL), removing Windows folders from PATH is required, please see [Build system setup WSL](https://openwrt.org/docs/guide-developer/build-system/wsl) documentation.
-  - Using macOS as the host build OS is __not__ recommended. No warranty at all. You can get tips from [Build system setup macOS](https://openwrt.org/docs/guide-developer/build-system/buildroot.exigence.macosx) documentation.
-  - For more details, please see [Build system setup](https://openwrt.org/docs/guide-developer/build-system/install-buildsystem) documentation.
+  笔记：
+    以非特权用户（而非 root）身份执行所有操作，无需 sudo。
+    使用基于其他架构的 CPU 应该可以编译 ImmortalWrt，但需要更多的黑客攻击 - 根本没有任何保证。
+    PATH 或驱动器上的工作文件夹中不能有空格或非 ASCII 字符。
+    如果您使用的是适用于 Linux 的 Windows 子系统（或 WSL），则需要从 PATH 中删除 Windows 文件夹，请参阅构建系统设置 WSL文档。
+    不建议使用 macOS 作为主机构建操作系统。没有任何保证。您可以从macOS 构建系统设置文档中获取相关提示。
+    有关更多详细信息，请参阅构建系统设置文档。
 
-  ### Quickstart
-  1. Run `git clone -b <branch> --single-branch --filter=blob:none https://github.com/immortalwrt/immortalwrt` to clone the source code.
-  2. Run `cd immortalwrt` to enter source directory.
-  3. Run `./scripts/feeds update -a` to obtain all the latest package definitions defined in feeds.conf / feeds.conf.default
-  4. Run `./scripts/feeds install -a` to install symlinks for all obtained packages into package/feeds/
-  5. Run `make menuconfig` to select your preferred configuration for the toolchain, target system & firmware packages.
-  6. Run `make` to build your firmware. This will download all sources, build the cross-compile toolchain and then cross-compile the GNU/Linux kernel & all chosen applications for your target system.
+  ### 快速入门
+  1. 运行 `git clone -b openwrt-24.10 --single-branch --filter=blob:none https://github.com/dailook/immortalwrt-24.10` 以克隆源代码。
+  2. 运行 `cd immortalwrt-24.10` 进入源目录。
+  3. 运行 `./scripts/feeds update -a` 以获取 feeds.conf / feeds.conf.default 中定义的所有最新包定义
+  4. 运行 `./scripts/feeds install -a` 安装所有获取的软件包的符号链接至 package/feeds/
+  5. 运行 `make menuconfig` 以选择工具链、目标系统和固件包的首选配置。
+  6. 运行 `make` 并构建您的固件。这将下载所有源代码，构建交叉编译工具链，然后为您的目标系统交叉编译 GNU/Linux 内核和所有选定的应用程序。
 
-  ### Related Repositories
-  The main repository uses multiple sub-repositories to manage packages of different categories. All packages are installed via the OpenWrt package manager called opkg. If you're looking to develop the web interface or port packages to ImmortalWrt, please find the fitting repository below.
-  - [LuCI Web Interface](https://github.com/immortalwrt/luci): Modern and modular interface to control the device via a web browser.
-  - [ImmortalWrt Packages](https://github.com/immortalwrt/packages): Community repository of ported packages.
-  - [OpenWrt Routing](https://github.com/openwrt/routing): Packages specifically focused on (mesh) routing.
-  - [OpenWrt Video](https://github.com/openwrt/video): Packages specifically focused on display servers and clients (Xorg and Wayland).
+  ### 二次编译：
+  
+  ```bash
+  cd immortalwrt  
+  git pull
+  ./scripts/feeds update -a
+  ./scripts/feeds install -a
+  make defconfig
+  make download -j8
+  make V=s -j$(nproc)
+  ```
+ 
+  ### 如果需要重新配置：
+  
+  ```bash
+  rm -rf .config
+  make menuconfig
+  make V=s -j$(nproc)
+  ```
 
-## Support Information
-For a list of supported devices see the [OpenWrt Hardware Database](https://openwrt.org/supported_devices)
-  ### Documentation
-  - [Quick Start Guide](https://openwrt.org/docs/guide-quick-start/start)
-  - [User Guide](https://openwrt.org/docs/guide-user/start)
-  - [Developer Documentation](https://openwrt.org/docs/guide-developer/start)
-  - [Technical Reference](https://openwrt.org/docs/techref/start)
-
-  ### Support Community
-  - Support Chat: group [@ctcgfw_openwrt_discuss](https://t.me/ctcgfw_openwrt_discuss) on [Telegram](https://telegram.org/).
-  - Support Chat: group [#immortalwrt](https://matrix.to/#/#immortalwrt:matrix.org) on [Matrix](https://matrix.org/).
-
-## License
-ImmortalWrt is licensed under [GPL-2.0-only](https://spdx.org/licenses/GPL-2.0-only.html).
-
-## Acknowledgements
-<table>
-  <tr>
-    <td><a href="https://dlercloud.com/"><img src="https://user-images.githubusercontent.com/22235437/111103249-f9ec6e00-8588-11eb-9bfc-67cc55574555.png" width="183" height="52" border="0" alt="Dler Cloud"></a></td>
-    <td><a href="https://www.jetbrains.com/"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_square.png" width="120" height="120" border="0" alt="JetBrains Black Box Logo logo"></a></td>
-    <td><a href="https://sourceforge.net/"><img src="https://sourceforge.net/sflogo.php?type=17&group_id=3663829" alt="SourceForge" width=200></a></td>
-  </tr>
-</table>
+编译完成后输出路径：bin/targets
