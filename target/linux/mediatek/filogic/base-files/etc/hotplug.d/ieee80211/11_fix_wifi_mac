@@ -101,6 +101,11 @@ case "$board" in
 		[ "$PHYNBR" = "0" ] && echo "$addr" > /sys${DEVPATH}/macaddress
 		[ "$PHYNBR" = "1" ] && macaddr_setbit_la $(macaddr_add $addr 1) > /sys${DEVPATH}/macaddress
 		;;
+	ikuai,q6000-emmc)
+ 		addr=$(mmc_get_mac_binary factory 0x0a)
+ 		[ "$PHYNBR" = "0" ] && echo "$addr" > /sys${DEVPATH}/macaddress
+ 		[ "$PHYNBR" = "1" ] && macaddr_setbit_la $(macaddr_add $addr 1) > /sys${DEVPATH}/macaddress
+ 		;;
 	jcg,q30-pro|\
 	netcore,n60|\
 	netcore,n60-pro)
