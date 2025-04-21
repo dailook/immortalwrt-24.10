@@ -1,9 +1,8 @@
 <img src="https://avatars.githubusercontent.com/u/53193414?s=200&v=4" alt="logo" width="200" height="200" align="right">
 
-# ImmortalWrt 24.10 MTK Project
+# ImmortalWrt 24.10 MTK Project 
 
-ImmortalWrt 是OpenWrt的一个分支，它移植了更多软件包，支持更多设备，默认优化了配置文件，并针对中国大陆用户进行了本地化修改。
-与上游版本相比，我们允许使用（非上游版本）修改/hack 来提供更好的功能/性能/支持。
+为方便mtk uboot刷入而修改
 
 默认登录地址：http://192.168.2.1 或 http://immortalwrt.lan  用户名：root  密码：
 
