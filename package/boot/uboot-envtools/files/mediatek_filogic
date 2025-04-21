@@ -33,12 +33,9 @@ ubootenv_add_ubi_default() {
 }
 
 case "$board" in
-abt,asr3000|\
 cetron,ct3003-ubootmod|\
 cmcc,a10-ubootmod|\
-cudy,tr3000-v1-ubootmod|\
 h3c,magic-nx30-pro|\
-imou,lc-hx3001|\
 jcg,q30-pro|\
 livinet,zr-3020-ubootmod|\
 mercusys,mr90x-v1-ubi|\
@@ -54,7 +51,6 @@ tplink,tl-xdr6088|\
 tplink,tl-xtr8488|\
 xiaomi,mi-router-ax3000t-ubootmod|\
 xiaomi,mi-router-wr30u-ubootmod|\
-
 zyxel,ex5601-t0-ubootmod)
 	ubootenv_add_ubi_default
 	;;
@@ -96,9 +92,13 @@ konka,komi-a31)
 		;;
 	esac
 	;;
+abt,asr3000|\
 cetron,ct3003|\
+cudy,tr3000-v1|\
+cudy,tr3000-v1-ubootmod|\
 edgecore,eap111|\
 h3c,magic-nx30-pro-nmbm|\
+imou,lc-hx3001|\
 livinet,zr-3020|\
 netgear,wax220|\
 zbtlink,zbt-z8102ax|\
