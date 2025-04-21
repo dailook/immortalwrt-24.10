@@ -56,7 +56,7 @@
   ### 二次编译：
   
   ```bash
-  cd immortalwrt  
+  cd immortalwrt-24.10  
   git pull
   ./scripts/feeds update -a
   ./scripts/feeds install -a
