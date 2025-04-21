@@ -1907,11 +1907,11 @@ define Device/xiaomi_redmi-router-ax6000
 endef
 TARGET_DEVICES += xiaomi_redmi-router-ax6000
 
-define Device/xiaomi_redmi-router-ax6000-ubootmod
+define Device/xiaomi_redmi-router-ax6000-512rom
   DEVICE_VENDOR := Xiaomi
   DEVICE_MODEL := Redmi Router AX6000
   DEVICE_VARIANT := 512ROM versions
-  DEVICE_DTS := mt7986a-xiaomi-redmi-router-ax6000-ubootmod
+  DEVICE_DTS := mt7986a-xiaomi-redmi-router-ax6000-512rom
   DEVICE_DTS_DIR := ../dts
   DEVICE_PACKAGES := kmod-leds-ws2812b kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware
   UBINIZE_OPTS := -E 5
@@ -1923,8 +1923,7 @@ define Device/xiaomi_redmi-router-ax6000-ubootmod
   IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
-TARGET_DEVICES += xiaomi_redmi-router-ax6000-ubootmod
-
+TARGET_DEVICES += xiaomi_redmi-router-ax6000-512rom
 define Device/yuncore_ax835
   DEVICE_VENDOR := YunCore
   DEVICE_MODEL := AX835
