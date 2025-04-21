@@ -5,7 +5,7 @@
 
 / {
 	model = "Xiaomi Redmi Router AX6000 512MB rom versions";
-	compatible = "xiaomi,redmi-router-ax6000-ubootmod", "mediatek,mt7986a";
+	compatible = "xiaomi,redmi-router-ax6000-512rom", "mediatek,mt7986a";
 };
 
 &spi_nand_flash {
