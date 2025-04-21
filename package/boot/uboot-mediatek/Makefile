@@ -1006,6 +1006,7 @@ UBOOT_TARGETS := \
 	mt7981_konka_komi-a31-emmc \
 	mt7981_konka_komi-a31-nor \
 	mt7981_livinet_zr-3020 \
+        mt7981_netis_nx31 \
 	mt7981_nokia_ea0326gmp \
 	mt7981_openwrt_one-snand \
 	mt7981_openwrt_one-nor \
