@@ -1123,8 +1123,7 @@ define Device/jdcloud_re-cp-03
   DEVICE_MODEL := RE-CP-03
   DEVICE_DTS := mt7986a-jdcloud-re-cp-03
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware \
-	e2fsprogs f2fsck mkf2fs
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware automount coremark blkid blockdev fdisk f2fsck mkf2fs kmod-mmc luci-app-ksmbd luci-i18n-ksmbd-zh-cn ksmbd-utils
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
  endef
 TARGET_DEVICES += jdcloud_re-cp-03
