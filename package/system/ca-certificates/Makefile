@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ca-certificates
-PKG_VERSION:=20240203
+PKG_VERSION:=20241223
 PKG_RELEASE:=1
 PKG_MAINTAINER:=
 
