@@ -1,6 +1,6 @@
 <img src="https://avatars.githubusercontent.com/u/53193414?s=200&v=4" alt="logo" width="200" height="200" align="right">
 
-# ImmortalWrt 24.10 MTK Project 
+# ImmortalWrt 24.10 MTK Project   本项目fork自 ImmortalWrt源码
 
 为方便mtk uboot刷入而修改
 
