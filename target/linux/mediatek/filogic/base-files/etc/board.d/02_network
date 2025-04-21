@@ -142,7 +142,7 @@ mediatek_setup_interfaces()
 	xiaomi,mi-router-wr30u-stock|\
 	xiaomi,mi-router-wr30u-ubootmod|\
 	xiaomi,redmi-router-ax6000|\
-	xiaomi,redmi-router-ax6000-ubootmod)
+	xiaomi,redmi-router-ax6000-512rom)
 		ucidef_set_interfaces_lan_wan "lan2 lan3 lan4" wan
 		;;
 	*)
@@ -210,7 +210,7 @@ mediatek_setup_macs()
 	xiaomi,mi-router-wr30u-stock|\
 	xiaomi,mi-router-wr30u-ubootmod|\
 	xiaomi,redmi-router-ax6000|\
-	xiaomi,redmi-router-ax6000-ubootmod)
+	xiaomi,redmi-router-ax6000-512rom)
 		wan_mac=$(mtd_get_mac_ascii Bdata ethaddr_wan)
 		label_mac=$wan_mac
 		;;
