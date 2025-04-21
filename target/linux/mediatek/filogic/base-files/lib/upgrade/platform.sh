@@ -103,7 +103,7 @@ platform_do_upgrade() {
 	xiaomi,redmi-router-ax6000-ubootmod|\
 	xiaomi,mi-router-wr30u-ubootmod|\
 	zyxel,ex5601-t0-ubootmod)
-		fit_do_upgrade "$1"
+		nand_do_upgrade "$1"
 		;;
 	acer,predator-w6|\
 	acer,predator-w6d|\
