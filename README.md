@@ -1,6 +1,6 @@
 <img src="https://avatars.githubusercontent.com/u/53193414?s=200&v=4" alt="logo" width="200" height="200" align="right">
 
-# Project ImmortalWrt 24.10
+# ImmortalWrt 24.10 MTK Project
 
 ImmortalWrt 是OpenWrt的一个分支，它移植了更多软件包，支持更多设备，默认优化了配置文件，并针对中国大陆用户进行了本地化修改。
 与上游版本相比，我们允许使用（非上游版本）修改/hack 来提供更好的功能/性能/支持。
@@ -11,14 +11,14 @@ ImmortalWrt 是OpenWrt的一个分支，它移植了更多软件包，支持更�
 要构建您自己的固件，您需要 GNU/Linux、BSD 或 macOS 系统（需要区分大小写的文件系统）。由于 Cygwin 不支持区分大小写的文件系统，因此不支持。
 
   ### 要求
-  要构建此项目，建议使用 Debian 11 and ubuntu 18-22.04系统。您需要使用基于 AMD64 架构的 CPU、至少 4GB 内存和 25GB 可用磁盘空间。请确保互联网连接畅通。
+  要构建此项目，建议使用 Debian 11 或者 ubuntu 18-22.04系统。您需要使用基于 AMD64 架构的 CPU、至少 4GB 内存和 25GB 可用磁盘空间。请确保互联网连接畅通。
 
   编译 ImmortalWrt 需要以下工具，不同发行版的包名称有所不同。
 
   - 以下是 Debian/Ubuntu 用户的示例：<br/>
     - 方法 1：
       <details>
-        <summary>通过APT设置依赖项</summary>
+        <summary>通过APT设置安装依赖项</summary>
 
         ```bash
         sudo apt update -y
