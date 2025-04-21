@@ -19,7 +19,7 @@
 	};
 
 	chosen {
-		bootargs = "root=PARTLABEL=rootfs rootwait rootfstype=squashfs,f2fs";
+		bootargs = "root=PARTLABEL=rootfs rootwait";
 		stdout-path = "serial0:115200n8";
 	};
 
@@ -56,8 +56,9 @@
 
 		wlan_led: led-1 {
 			function = LED_FUNCTION_WLAN;
-			color = <LED_COLOR_ID_WHITE>;
+			color = <LED_COLOR_ID_BLUE>;
 			gpios = <&pio 10 GPIO_ACTIVE_LOW>;
+                        linux,default-trigger = "phy1tpt";
 		};
 	};
 
@@ -195,5 +196,4 @@
 
 &xhci {
 	status = "okay";
-	vbus-supply = <&usb_vbus>;
 };
