@@ -4,7 +4,7 @@
 
 为方便mtk uboot刷入而修改
 
-默认登录地址：http://192.168.2.1 或 http://immortalwrt.lan  用户名：root  密码：
+默认登录地址：http://192.168.2.1 或 http://immortalwrt.lan  用户名：root  密码：无
 
 ## 发展
 要构建您自己的固件，您需要 GNU/Linux、BSD 或 macOS 系统（需要区分大小写的文件系统）。由于 Cygwin 不支持区分大小写的文件系统，因此不支持。
