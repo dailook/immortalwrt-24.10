@@ -1924,6 +1924,7 @@ define Device/xiaomi_redmi-router-ax6000-512rom
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += xiaomi_redmi-router-ax6000-512rom
+
 define Device/yuncore_ax835
   DEVICE_VENDOR := YunCore
   DEVICE_MODEL := AX835
