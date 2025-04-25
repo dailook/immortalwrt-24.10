@@ -24,7 +24,7 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
  #define RTL8366RB_POWER_SAVE			0x15
  #define RTL8366RB_POWER_SAVE_ON			BIT(12)
  
-@@ -889,6 +893,15 @@ static int rtl822xb_config_init(struct p
+@@ -892,6 +896,15 @@ static int rtl822xb_config_init(struct p
  	if (ret < 0)
  		return ret;
  
