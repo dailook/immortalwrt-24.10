@@ -12,7 +12,7 @@ Signed-off-by: Jianhui Zhao <zhaojh329@gmail.com>
 
 --- a/drivers/net/phy/realtek/realtek_main.c
 +++ b/drivers/net/phy/realtek/realtek_main.c
-@@ -1377,6 +1377,51 @@ static irqreturn_t rtl9000a_handle_inter
+@@ -1381,6 +1381,51 @@ static irqreturn_t rtl9000a_handle_inter
  	return IRQ_HANDLED;
  }
  
