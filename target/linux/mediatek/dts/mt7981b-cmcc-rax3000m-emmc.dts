@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
  
  /dts-v1/;
- mt7981b-cmcc-rax3000m.dtsi
+ #include "mt7981b-cmcc-rax3000m.dtsi"
  
  / {
+  model = "CMCC RAX3000M eMMC";
  	compatible = "cmcc,rax3000m", "mediatek,mt7981";
  
  	fragment@0 {
