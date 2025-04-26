@@ -54,7 +54,7 @@
  			pinctrl-0 = <&spi0_flash_pins>;
  			status = "okay";
  
- 	&spi_nand {
+ 	spi_nand@0 {
  	spi-cal-enable;
  	spi-cal-mode = "read-data";
  	spi-cal-datalen = <7>;
