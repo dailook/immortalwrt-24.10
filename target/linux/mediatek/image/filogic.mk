@@ -1699,6 +1699,16 @@ define Device/tplink_re6000xd
 endef
 TARGET_DEVICES += tplink_re6000xd
 
+define Device/sl_3000-emmc
+  DEVICE_VENDOR := SL
+  DEVICE_MODEL := 3000 eMMC bootstrap version
+  DEVICE_DTS := mt7981b-sl-3000-emmc
+  DEVICE_DTS_DIR := ../dts
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware \ automount f2fsck mkf2fs coremark blkid blockdev fdisk kmod-mmc
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += sl_3000-emmc
+
 define Device/tplink_tl-xdr-common
   DEVICE_VENDOR := TP-Link
   DEVICE_DTS_DIR := ../dts
