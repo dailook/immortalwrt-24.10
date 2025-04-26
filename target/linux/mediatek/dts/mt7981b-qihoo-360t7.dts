@@ -3,7 +3,6 @@
 /dts-v1/;
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
-#include <dt-bindings/leds/common.h>
 
 #include "mt7981.dtsi"
 
@@ -12,16 +11,14 @@
 	compatible = "qihoo,360t7", "mediatek,mt7981";
 
 	aliases {
+		led-boot = &red_led;
+		led-failsafe = &red_led;
+		led-running = &green_led;
+		led-upgrade = &green_led;
 		serial0 = &uart0;
-		led-boot = &led_status_red;
-		led-failsafe = &led_status_red;
-		led-running = &led_status_green;
-		led-upgrade = &led_status_green;
 	};
 
 	chosen {
-		bootargs-append = " root=/dev/fit0 rootwait";
-		rootdisk = <&ubi_rootdisk>;
 		stdout-path = "serial0:115200n8";
 	};
 
@@ -32,43 +29,47 @@
 	gpio-keys {
 		compatible = "gpio-keys";
 
-		reset {
+		button-reset {
 			label = "reset";
 			linux,code = <KEY_RESTART>;
 			gpios = <&pio 1 GPIO_ACTIVE_LOW>;
 		};
 
-		wps {
+		button-wps {
 			label = "wps";
 			linux,code = <KEY_WPS_BUTTON>;
 			gpios = <&pio 0 GPIO_ACTIVE_LOW>;
 		};
 	};
 
-	leds {
+	gpio-leds {
 		compatible = "gpio-leds";
 
-		led_status_red: red {
-			function = LED_FUNCTION_STATUS;
-			color = <LED_COLOR_ID_RED>;
+		red_led: led-0 {
+			label = "red:system";
 			gpios = <&pio 3 GPIO_ACTIVE_LOW>;
 		};
 
-		led_status_green: green {
-			function = LED_FUNCTION_STATUS;
-			color = <LED_COLOR_ID_GREEN>;
+		green_led: led-1 {
+			label = "green:system";
 			gpios = <&pio 7 GPIO_ACTIVE_LOW>;
 		};
 	};
 };
 
 &eth {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mdio_pins>;
+
 	status = "okay";
 
 	gmac0: mac@0 {
 		compatible = "mediatek,eth-mac";
 		reg = <0>;
 		phy-mode = "2500base-x";
+
+		nvmem-cells = <&macaddr_factory_14 0>;
+		nvmem-cell-names = "mac-address";
 
 		fixed-link {
 			speed = <2500>;
@@ -95,15 +96,25 @@
 	pinctrl-0 = <&spi0_flash_pins>;
 	status = "okay";
 
-	spi_nand@0 {
-		compatible = "spi-nand";
+	spi_nand: flash@0 {
 		#address-cells = <1>;
 		#size-cells = <1>;
+		compatible = "spi-nand";
 		reg = <0>;
-
 		spi-max-frequency = <52000000>;
+
+		spi-cal-enable;
+		spi-cal-mode = "read-data";
+		spi-cal-datalen = <7>;
+		spi-cal-data = /bits/ 8 <0x53 0x50 0x49 0x4E 0x41 0x4E 0x44>;
+		spi-cal-addrlen = <5>;
+		spi-cal-addr = /bits/ 32 <0x0 0x0 0x0 0x0 0x0>;
+
 		spi-tx-bus-width = <4>;
 		spi-rx-bus-width = <4>;
+		mediatek,nmbm;
+		mediatek,bmt-max-ratio = <1>;
+		mediatek,bmt-max-reserved-blocks = <64>;
 
 		partitions {
 			compatible = "fixed-partitions";
@@ -111,55 +122,58 @@
 			#size-cells = <1>;
 
 			partition@0 {
-				label = "bl2";
-				reg = <0x0000000 0x0100000>;
-				read-only;
+				label = "BL2";
+				reg = <0x00000 0x100000>;
 			};
 
 			partition@100000 {
 				label = "u-boot-env";
-				reg = <0x0100000 0x0080000>;
+				reg = <0x100000 0x80000>;
 			};
 
 			factory: partition@180000 {
 				label = "Factory";
-				reg = <0x0180000 0x0200000>;
-				read-only;
+				reg = <0x180000 0x200000>;
 			};
 
 			partition@380000 {
-				label = "fip";
-				reg = <0x0380000 0x0200000>;
-				read-only;
+				label = "FIP";
+				reg = <0x380000 0x200000>;
 			};
 
 			partition@580000 {
 				label = "ubi";
-				reg = <0x0580000 0x6c00000>;
-				compatible = "linux,ubi";
-
-				volumes {
-					ubi_rootdisk: ubi-volume-fit {
-						volname = "fit";
-					};
-				};
+				reg = <0x580000 0x6c00000>;
 			};
 
 			partition@7180000 {
-				label = "config";
-				reg = <0x7180000 0x0100000>;
+				label = "stock-config";
+				reg = <0x7180000 0x100000>;
 				read-only;
 			};
 
 			partition@7280000 {
-				label = "factory";
-				reg = <0x7280000 0x0080000>;
+				label = "stock-factory";
+				reg = <0x7280000 0x80000>;
 				read-only;
+
+				compatible = "nvmem-cells";
+				nvmem-layout {
+					compatible = "fixed-layout";
+					#address-cells = <1>;
+					#size-cells = <1>;
+
+					macaddr_factory_14: macaddr@14 {
+						compatible = "mac-base";
+						reg = <0x14 0x11>;
+						#nvmem-cell-cells = <1>;
+					};
+				};
 			};
 
 			partition@7300000 {
-				label = "log";
-				reg = <0x7300000 0x0700000>;
+				label = "stock-log";
+				reg = <0x7300000 0x400000>;
 				read-only;
 			};
 		};
@@ -173,7 +187,7 @@
 
 		port@0 {
 			reg = <0>;
-			label = "lan3";
+			label = "lan1";
 		};
 
 		port@1 {
@@ -183,12 +197,15 @@
 
 		port@2 {
 			reg = <2>;
-			label = "lan1";
+			label = "lan3";
 		};
 
 		port@3 {
 			reg = <3>;
 			label = "wan";
+
+			nvmem-cells = <&macaddr_factory_14 1>;
+			nvmem-cell-names = "mac-address";
 		};
 
 		port@6 {
@@ -215,13 +232,13 @@
 		conf-pu {
 			pins = "SPI0_CS", "SPI0_HOLD", "SPI0_WP";
 			drive-strength = <8>;
-			mediatek,pull-up-adv = <0>; /* bias-disable */
+			bias-pull-up = <103>;
 		};
 
 		conf-pd {
 			pins = "SPI0_CLK", "SPI0_MOSI", "SPI0_MISO";
 			drive-strength = <8>;
-			mediatek,pull-up-adv = <0>; /* bias-disable */
+			bias-pull-down = <103>;
 		};
 	};
 };
