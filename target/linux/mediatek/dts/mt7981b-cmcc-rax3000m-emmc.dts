@@ -4,7 +4,7 @@
  #include "mt7981b-cmcc-rax3000m.dtsi"
  
  / {
-  model = "CMCC RAX3000M eMMC";
+ 	model = "CMCC RAX3000M eMMC";
  	compatible = "cmcc,rax3000m", "mediatek,mt7981";
  
  	fragment@0 {
