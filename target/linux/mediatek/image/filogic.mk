@@ -626,16 +626,17 @@ define Device/cmcc_rax3000me
   DEVICE_VENDOR := CMCC
   DEVICE_MODEL := RAX3000Me
   DEVICE_DTS := mt7981b-cmcc-rax3000me
-  $(call Device/cmcc_rax3000m_common)
-  DEVICE_DTS_OVERLAY += mt7981b-cmcc-rax3000me-nousb
-  ARTIFACTS += nand-ddr3-preloader.bin nand-ddr3-bl31-uboot.fip \
-	nand-ddr4-preloader.bin nand-ddr4-bl31-uboot.fip
-  ARTIFACT/emmc-preloader.bin := mt7981-bl2 emmc-ddr3
-  ARTIFACT/emmc-bl31-uboot.fip := mt7981-bl31-uboot cmcc_rax3000me-emmc
-  ARTIFACT/nand-ddr3-preloader.bin := mt7981-bl2 spim-nand-ddr3
-  ARTIFACT/nand-ddr3-bl31-uboot.fip := mt7981-bl31-uboot cmcc_rax3000me-nand-ddr3
-  ARTIFACT/nand-ddr4-preloader.bin := mt7981-bl2 spim-nand-ddr4
-  ARTIFACT/nand-ddr4-bl31-uboot.fip := mt7981-bl31-uboot cmcc_rax3000me-nand-ddr4
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware \
+	kmod-usb-net-cdc-mbim kmod-usb-net-qmi-wwan kmod-usb-serial-option \
+	kmod-usb3 automount f2fsck mkf2fs uqmi coremark blkid blockdev fdisk
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  IMAGE_SIZE := 116736k
+  KERNEL_IN_UBI := 1  
+  IMAGES += factory.bin
+  IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += cmcc_rax3000me
 
