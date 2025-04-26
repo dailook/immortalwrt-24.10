@@ -622,24 +622,6 @@ define Device/cmcc_rax3000m-emmc
 endef
 TARGET_DEVICES += cmcc_rax3000m-emmc
 
-define Device/cmcc_rax3000me
-  DEVICE_VENDOR := CMCC
-  DEVICE_MODEL := RAX3000Me
-  DEVICE_DTS := mt7981b-cmcc-rax3000me
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware \
-	kmod-usb-net-cdc-mbim kmod-usb-net-qmi-wwan kmod-usb-serial-option \
-	kmod-usb3 automount f2fsck mkf2fs uqmi coremark blkid blockdev fdisk
-  UBINIZE_OPTS := -E 5
-  BLOCKSIZE := 128k
-  PAGESIZE := 2048
-  IMAGE_SIZE := 116736k
-  KERNEL_IN_UBI := 1  
-  IMAGES += factory.bin
-  IMAGE/factory.bin := append-ubi | check-size $$$$(IMAGE_SIZE)
-  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
-endef
-TARGET_DEVICES += cmcc_rax3000me
-
 define Device/comfast_cf-e393ax
   DEVICE_VENDOR := COMFAST
   DEVICE_MODEL := CF-E393AX
