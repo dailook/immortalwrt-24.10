@@ -163,7 +163,7 @@
 			#size-cells = <1>;
 
 			partition@0 {
-				label = "bl2";
+				label = "BL2";
 				reg = <0x0 0x100000>;
 				read-only;
 			};
@@ -192,7 +192,7 @@
 			};
 
 			partition@280000 {
-				label = "factory";
+				label = "Factory";
 				reg = <0x280000 0x100000>;
 				read-only;
 
@@ -208,13 +208,12 @@
 			};
 
 			partition@380000 {
-				label = "fip";
+				label = "FIP";
 				reg = <0x380000 0x200000>;
 				read-only;
 			};
 
 			partition@580000 {
-				compatible = "linux,ubi";
 				label = "ubi";
 				reg = <0x580000 0x7200000>;
 			};
