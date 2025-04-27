@@ -55,11 +55,13 @@ zyxel,ex5601-t0-ubootmod)
 acer,predator-w6|\
 acer,predator-w6d|\
 acer,vero-w6m|\
+clx,s20p|\
 glinet,gl-mt2500|\
 glinet,gl-mt6000|\
 glinet,gl-x3000|\
 glinet,gl-xe3000|\
 ikuai,q6000-emmc|\
+jdcloud,re-cp-03|\
 sl,3000-emmc|\
 huasifei,wh3000-emmc)
 	local envdev=$(find_mmc_part "u-boot-env")
@@ -73,7 +75,6 @@ bananapi,bpi-r3-mini|\
 bananapi,bpi-r4|\
 bananapi,bpi-r4-poe|\
 cmcc,rax3000me|\
-jdcloud,re-cp-03|\
 konka,komi-a31)
 	. /lib/upgrade/fit.sh
 	export_fitblk_bootdev
