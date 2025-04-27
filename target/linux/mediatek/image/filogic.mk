@@ -588,6 +588,17 @@ define Device/cmcc_a10-ubootmod
 endef
 TARGET_DEVICES += cmcc_a10-ubootmod
 
+define Device/clx_s20p
+  DEVICE_VENDOR := CLX
+  DEVICE_MODEL := S20P
+  DEVICE_DTS := mt7986a-clx-s20p
+  DEVICE_DTS_DIR := ../dts
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware kmod-usb3 \
+	automount e2fsprogs f2fsck mkf2fs
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += clx_s20p
+
 define Device/cmcc_rax3000m
   DEVICE_VENDOR := CMCC
   DEVICE_MODEL := RAX3000M NAND
