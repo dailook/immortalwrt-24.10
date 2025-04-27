@@ -42,7 +42,6 @@ mercusys,mr90x-v1-ubi|\
 netcore,n60|\
 netcore,n60-pro|\
 netis,nx31|\
-nokia,ea0326gmp|\
 routerich,ax3000-ubootmod|\
 tplink,tl-xdr4288|\
 tplink,tl-xdr6086|\
@@ -118,6 +117,7 @@ h3c,magic-nx30-pro-nmbm|\
 imou,lc-hx3001|\
 livinet,zr-3020|\
 netgear,wax220|\
+nokia,ea0326gmp|\
 zbtlink,zbt-z8102ax|\
 zbtlink,zbt-z8103ax)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x20000" "0x20000"
