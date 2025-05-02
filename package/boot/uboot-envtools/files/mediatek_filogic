@@ -33,7 +33,6 @@ ubootenv_add_ubi_default() {
 }
 
 case "$board" in
-cetron,ct3003-ubootmod|\
 cmcc,a10-ubootmod|\
 h3c,magic-nx30-pro|\
 jcg,q30-pro|\
@@ -111,6 +110,7 @@ cmcc,rax3000m)
 qihoo,360t7|\
 abt,asr3000|\
 cetron,ct3003|\
+cetron,ct3003-ubootmod|\
 cudy,tr3000-v1|\
 cudy,tr3000-v1-ubootmod|\
 edgecore,eap111|\
