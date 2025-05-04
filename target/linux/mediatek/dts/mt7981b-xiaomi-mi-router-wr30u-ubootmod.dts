@@ -6,6 +6,7 @@
 / {
 	model = "Xiaomi Mi Router WR30U";
 	compatible = "xiaomi,mi-router-wr30u-ubootmod", "mediatek,mt7981";
+};
 
 &spi_nand {
 	mediatek,nmbm;
