@@ -91,6 +91,7 @@ platform_do_upgrade() {
 	openwrt,one|\
 	netcore,n60|\
 	netcore,n60-pro|\
+        netcore,n60-pro-512rom|\
 	qihoo,360t7|\
 	routerich,ax3000-ubootmod|\
 	tplink,tl-xdr4288|\
@@ -102,8 +103,8 @@ platform_do_upgrade() {
 	xiaomi,redmi-router-ax6000-512rom|\
 	xiaomi,mi-router-wr30u-ubootmod|\
 	zyxel,ex5601-t0-ubootmod)
-		fit_do_upgrade "$1"
-		;;
+		CI_UBIPART="ubi0"
+		nand_do_upgrade "$1"
 	acer,predator-w6|\
 	acer,predator-w6d|\
 	acer,vero-w6m|\
