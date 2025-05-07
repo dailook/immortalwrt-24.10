@@ -145,6 +145,10 @@ netcore,n60-pro|\)
 	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
 	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000" "1"
 	;;
+ikuai,q6000)
+	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
+	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000" "1"
+	;;
 openembed,som7981)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x80000" "0x80000"
 	ubootenv_add_uci_sys_config "/dev/mtd3" "0x0" "0x100000" "0x100000"
@@ -173,7 +177,6 @@ zyxel,ex5601-t0)
 	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
 	ubootenv_add_uci_config "$envdev" "0x0" "0x20000" "0x40000" "2"
 	;;
-ikuai,q6000|\
 zyxel,ex5700-telenor)
 	ubootenv_add_uci_config "/dev/ubootenv" "0x0" "0x4000" "0x4000" "1"
 	;;
