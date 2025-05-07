@@ -140,12 +140,9 @@ tplink,re6000xd)
 	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
 	ubootenv_add_uci_config "$envdev" "0x0" "0x20000" "0x20000" "1"
 	;;
+ikuai,q6000|\
 netcore,n60-pro-512rom|\
 netcore,n60-pro|\)
-	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
-	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000" "1"
-	;;
-ikuai,q6000)
 	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
 	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000" "1"
 	;;
