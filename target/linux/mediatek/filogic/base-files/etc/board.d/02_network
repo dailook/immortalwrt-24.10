@@ -44,6 +44,7 @@ mediatek_setup_interfaces()
 	keenetic,kn3811|\
 	livinet,zr-3020|\
 	livinet,zr-3020-ubootmod|\
+        philips,hy3000|\
 	qihoo,360t7|\
 	routerich,ax3000|\
         sl,3000-emmc|\
@@ -199,6 +200,11 @@ mediatek_setup_macs()
 		lan_mac=$(mtd_get_mac_ascii u-boot-env mac)
 		label_mac=$lan_mac
 		;;
+	philips,hy3000)
+ 		lan_mac=$(mmc_get_mac_binary factory 0x74)		
+ 		wan_mac=$(macaddr_add "$lan_mac" -1)
+ 		label_mac=$lan_mac
+ 		;;
 	qihoo,360t7)
 		lan_mac=$(mtd_get_mac_ascii factory lanMac)
 		wan_mac=$(macaddr_add "$lan_mac" 1)
