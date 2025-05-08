@@ -58,6 +58,7 @@ glinet,gl-x3000|\
 glinet,gl-xe3000|\
 ikuai,q6000-emmc|\
 jdcloud,re-cp-03|\
+philips,hy3000|\
 sl,3000-emmc|\
 huasifei,wh3000-emmc)
 	local envdev=$(find_mmc_part "u-boot-env")
