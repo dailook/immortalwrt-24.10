@@ -162,11 +162,6 @@ case "$board" in
 		[ "$PHYNBR" = "0" ] && macaddr_add $addr 1 > /sys${DEVPATH}/macaddress
 		[ "$PHYNBR" = "1" ] && macaddr_add $addr 2 > /sys${DEVPATH}/macaddress
 		;;
-	philips,hy3000)
- 		label_mac=$(mmc_get_mac_binary factory 0x74)
-		[ "$PHYNBR" = "0" ] && macaddr_add $label_mac 1 > /sys${DEVPATH}/macaddress
-		[ "$PHYNBR" = "1" ] && macaddr_add $label_mac 2 > /sys${DEVPATH}/macaddress
-		;;
 	qihoo,360t7)
 		addr=$(cat /sys/class/net/eth0/address)
  		[ "$PHYNBR" = "0" ] && macaddr_add $addr 2 > /sys${DEVPATH}/macaddress
