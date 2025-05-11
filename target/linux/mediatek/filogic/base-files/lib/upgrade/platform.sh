@@ -118,7 +118,6 @@ platform_do_upgrade() {
 	huasifei,wh3000-emmc|\
         ikuai,q6000-emmc|\
 	jdcloud,re-cp-03|\
-        philips,hy3000|\
         sl,3000-emmc|\
 	smartrg,sdg-8612|\
 	smartrg,sdg-8614|\
@@ -231,7 +230,6 @@ platform_copy_config() {
 	huasifei,wh3000-emmc|\
         ikuai,q6000-emmc|\
 	jdcloud,re-cp-03|\
-        philips,hy3000|\
         sl,3000-emmc|\
 	smartrg,sdg-8612|\
 	smartrg,sdg-8614|\
