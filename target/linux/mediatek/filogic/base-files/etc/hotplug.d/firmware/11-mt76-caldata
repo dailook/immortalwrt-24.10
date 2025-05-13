@@ -9,6 +9,10 @@ board=$(board_name)
 case "$FIRMWARE" in
 "mediatek/mt7981_eeprom_mt7976_dbdc.bin")
 	case "$board" in
+	mercusys,mr80x-v3)
+		ln -sf /tmp/tp_data/MT7981_EEPROM.bin \
+			/lib/firmware/$FIRMWARE
+		;;
         cmcc,rax3000m|\
         sl,3000-emmc|\
 	ubnt,unifi-6-plus)
