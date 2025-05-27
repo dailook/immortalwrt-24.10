@@ -56,7 +56,16 @@
 		reset-gpios = <&gpio2 RK_PB1 GPIO_ACTIVE_LOW>;
 	};
 
-	vcc_sysin: vcc-sysin-regulator {
+	vccin_5v: regulator-vccin-5v {
+		compatible = "regulator-fixed";
+		regulator-name = "vccin_5v";
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+	};
+
+	vcc_sysin: regulator-vcc-sysin {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc_sysin";
 		regulator-always-on;
