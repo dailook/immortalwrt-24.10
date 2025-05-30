@@ -49,6 +49,7 @@ mediatek_setup_interfaces()
 	livinet,zr-3020-ubootmod|\
 	qihoo,360t7|\
 	routerich,ax3000|\
+        sl,3000|\
         sl,3000-emmc|\
 	routerich,ax3000-ubootmod)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3" wan
@@ -229,6 +230,11 @@ mediatek_setup_macs()
 		wan_mac=$label_mac
 		lan_mac=$(macaddr_add "$label_mac" 1)
 		;;
+	sl,3000)
+ 		lan_mac=$(mtd_get_mac_binary Factory 0x04)		
+ 		wan_mac=$(macaddr_add "$lan_mac" -2)
+ 		label_mac=$lan_mac
+ 		;;
         sl,3000-emmc)
  		lan_mac=$(mmc_get_mac_binary factory 0x04)		
  		wan_mac=$(macaddr_add "$lan_mac" -2)
