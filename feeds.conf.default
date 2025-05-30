@@ -6,3 +6,4 @@ src-git istore https://github.com/linkease/istore;main
 src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main
 src-git gecoosac_luci https://github.com/lwb1978/openwrt-gecoosac.git
 src-git lucky_luci https://github.com/sirpdboy/luci-app-lucky.git
+src-git passwall2_luci https://github.com/xiaorouji/openwrt-passwall2.git;main
