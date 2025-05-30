@@ -1692,19 +1692,18 @@ define Device/ruijie_rg-x60-pro
 endef
 TARGET_DEVICES += ruijie_rg-x60-pro
 
-define Device/tplink_re6000xd
-  DEVICE_VENDOR := TP-Link
-  DEVICE_MODEL := RE6000XD
-  DEVICE_DTS := mt7986b-tplink-re6000xd
+define Device/sl_3000
+  DEVICE_VENDOR := SL
+  DEVICE_MODEL := 3000
+  DEVICE_DTS := mt7981b-sl-3000
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware
-  UBINIZE_OPTS := -E 5
-  BLOCKSIZE := 128k
-  PAGESIZE := 2048
-  IMAGE_SIZE := 51200k
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware automount coremark blkid blockdev fdisk f2fsck mkf2fs kmod-mmc
+  KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  KERNEL_INITRAMFS := kernel-bin | lzma | \
+	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
-TARGET_DEVICES += tplink_re6000xd
+TARGET_DEVICES += sl_3000
 
 define Device/sl_3000-emmc
   DEVICE_VENDOR := SL
@@ -1718,6 +1717,20 @@ define Device/sl_3000-emmc
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += sl_3000-emmc
+
+define Device/tplink_re6000xd
+  DEVICE_VENDOR := TP-Link
+  DEVICE_MODEL := RE6000XD
+  DEVICE_DTS := mt7986b-tplink-re6000xd
+  DEVICE_DTS_DIR := ../dts
+  DEVICE_PACKAGES := kmod-mt7915e kmod-mt7986-firmware mt7986-wo-firmware
+  UBINIZE_OPTS := -E 5
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  IMAGE_SIZE := 51200k
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += tplink_re6000xd
 
 define Device/tplink_tl-xdr-common
   DEVICE_VENDOR := TP-Link
