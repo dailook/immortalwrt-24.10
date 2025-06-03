@@ -280,7 +280,7 @@ Signed-off-by: Jakub Kicinski <kuba@kernel.org>
  				  ring->dma, ring->phys);
  		ring->dma = NULL;
  	}
-@@ -3132,7 +3132,7 @@ static void mtk_dma_free(struct mtk_ethAdd commentMore actions
+@@ -3132,7 +3132,7 @@ static void mtk_dma_free(struct mtk_eth
  
  	if (!MTK_HAS_CAPS(soc->caps, MTK_SRAM) && eth->scratch_ring) {
  		dma_free_coherent(eth->dma_dev,

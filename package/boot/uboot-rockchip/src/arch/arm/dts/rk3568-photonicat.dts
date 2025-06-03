@@ -53,7 +53,7 @@
 		clock-names = "ext_clock";
 		pinctrl-names = "default";
 		pinctrl-0 = <&wifi_enable_h &clk32k_out1>;
-                post-power-on-delay-ms = <200>;
+		post-power-on-delay-ms = <200>;
 		reset-gpios = <&gpio2 RK_PB1 GPIO_ACTIVE_LOW>;
 	};
 
@@ -123,7 +123,7 @@
 		regulator-name = "vcc3v3_ngff";
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-                vin-supply = <&vccin_5v>;
+		vin-supply = <&vccin_5v>;
 	};
 
 	/* pi6c pcie clock generator */
@@ -136,7 +136,7 @@
 		regulator-name = "vcc3v3_pi6c";
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-                startup-delay-us = <200000>;
+		startup-delay-us = <200000>;
 		vin-supply = <&vcc_syson>;
 	};
 
@@ -148,7 +148,7 @@
 		regulator-boot-on;
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-                startup-delay-us = <50000>;
+		startup-delay-us = <50000>;
 		vin-supply = <&vcc3v3_pi6c>;
 	};
 
@@ -174,7 +174,7 @@
 		regulator-name = "vcc5v0_boost";
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
-                vin-supply = <&vcc5v0_usb_otg>;
+		vin-supply = <&vcc5v0_usb_otg>;
 	};
 
 	vcc5v0_usb_otg: regulator-vcc5v0-usb-otg {

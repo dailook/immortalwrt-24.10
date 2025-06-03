@@ -33,33 +33,38 @@ ubootenv_add_ubi_default() {
 }
 
 case "$board" in
+abt,asr3000|\
+cetron,ct3003-ubootmod|\
+cmcc,a10-ubootmod|\
+cudy,tr3000-v1-ubootmod|\
 h3c,magic-nx30-pro|\
+imou,lc-hx3001|\
 jcg,q30-pro|\
 livinet,zr-3020-ubootmod|\
 mercusys,mr90x-v1-ubi|\
 netcore,n60|\
+netcore,n60-pro|\
 netis,nx31|\
+nokia,ea0326gmp|\
+qihoo,360t7|\
 routerich,ax3000-ubootmod|\
 tplink,tl-xdr4288|\
 tplink,tl-xdr6086|\
 tplink,tl-xdr6088|\
 tplink,tl-xtr8488|\
 xiaomi,mi-router-ax3000t-ubootmod|\
+xiaomi,mi-router-wr30u-ubootmod|\
+xiaomi,redmi-router-ax6000-ubootmod|\
 zyxel,ex5601-t0-ubootmod)
 	ubootenv_add_ubi_default
 	;;
 acer,predator-w6|\
 acer,predator-w6d|\
 acer,vero-w6m|\
-clx,s20p|\
 glinet,gl-mt2500|\
 glinet,gl-mt6000|\
 glinet,gl-x3000|\
 glinet,gl-xe3000|\
-ikuai,q6000-emmc|\
-jdcloud,re-cp-03|\
-sl,3000|\
-sl,3000-emmc|\
 huasifei,wh3000-emmc)
 	local envdev=$(find_mmc_part "u-boot-env")
 	ubootenv_add_uci_config "$envdev" "0x0" "0x80000"
@@ -71,7 +76,9 @@ bananapi,bpi-r3|\
 bananapi,bpi-r3-mini|\
 bananapi,bpi-r4|\
 bananapi,bpi-r4-poe|\
+cmcc,rax3000m|\
 cmcc,rax3000me|\
+jdcloud,re-cp-03|\
 konka,komi-a31)
 	. /lib/upgrade/fit.sh
 	export_fitblk_bootdev
@@ -88,36 +95,11 @@ konka,komi-a31)
 		;;
 	esac
 	;;
-cmcc,rax3000m)
- 	case "$(cmdline_get_var root)" in
- 	/dev/mmc*)
- 		local envdev=$(find_mmc_part "ubootenv" "mmcblk0")
- 		ubootenv_add_uci_config "$envdev" "0x0" "0x40000" "0x40000" "1"
- 		ubootenv_add_uci_config "$envdev" "0x40000" "0x40000" "0x40000" "1"
- 		;;
- 	*)
- 		. /lib/upgrade/nand.sh
- 		local envubi=$(nand_find_ubi ubi)
- 		local envdev=/dev/$(nand_find_volume $envubi ubootenv)
- 		local envdev2=/dev/$(nand_find_volume $envubi ubootenv2)
- 		ubootenv_add_uci_config "$envdev" "0x0" "0x1f000" "0x1f000" "1"
- 		ubootenv_add_uci_config "$envdev2" "0x0" "0x1f000" "0x1f000" "1"
- 		;;
- 	esac
- 	;;
-qihoo,360t7|\
-abt,asr3000|\
 cetron,ct3003|\
-cetron,ct3003-ubootmod|\
-cmcc,a10-ubootmod|\
-cudy,tr3000-v1|\
-cudy,tr3000-v1-ubootmod|\
 edgecore,eap111|\
 h3c,magic-nx30-pro-nmbm|\
-imou,lc-hx3001|\
 livinet,zr-3020|\
 netgear,wax220|\
-nokia,ea0326gmp|\
 zbtlink,zbt-z8102ax|\
 zbtlink,zbt-z8103ax)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x20000" "0x20000"
@@ -143,12 +125,6 @@ tplink,re6000xd)
 	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
 	ubootenv_add_uci_config "$envdev" "0x0" "0x20000" "0x20000" "1"
 	;;
-ikuai,q6000|\
-netcore,n60-pro-512rom|\
-netcore,n60-pro|\)
-	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
-	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000" "1"
-	;;
 openembed,som7981)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x80000" "0x80000"
 	ubootenv_add_uci_sys_config "/dev/mtd3" "0x0" "0x100000" "0x100000"
@@ -167,9 +143,7 @@ ubnt,unifi-6-plus)
 	;;
 xiaomi,mi-router-ax3000t|\
 xiaomi,mi-router-wr30u-stock|\
-xiaomi,mi-router-wr30u-ubootmod|\
-xiaomi,redmi-router-ax6000-512rom|\
-xiaomi,redmi-router-ax6000)
+xiaomi,redmi-router-ax6000-stock)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x10000" "0x20000"
 	ubootenv_add_uci_sys_config "/dev/mtd2" "0x0" "0x10000" "0x20000"
 	;;

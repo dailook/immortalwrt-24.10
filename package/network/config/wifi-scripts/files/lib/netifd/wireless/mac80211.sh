@@ -741,9 +741,9 @@ mac80211_prepare_vif() {
 mac80211_prepare_iw_htmode() {
 	case "$htmode" in
 		HT20|VHT20|HE20|EHT20)
- 			iw_htmode=HT20
- 		;;
- 		HT40*|VHT40|HE40|EHT40)
+			iw_htmode=HT20
+		;;
+		HT40*|VHT40|HE40|EHT40)
 			case "$band" in
 				2g)
 					case "$htmode" in
@@ -768,10 +768,10 @@ mac80211_prepare_iw_htmode() {
 			[ "$auto_channel" -gt 0 ] && iw_htmode="HT40+"
 		;;
 		VHT80|HE80|EHT80)
- 			iw_htmode="80MHz"
- 		;;
- 		VHT160|HE160|EHT160)
- 			iw_htmode="160MHz"
+			iw_htmode="80MHz"
+		;;
+		VHT160|HE160|EHT160)
+			iw_htmode="160MHz"
 		;;
 		NONE|NOHT)
 			iw_htmode="NOHT"

@@ -110,7 +110,7 @@ ifndef CONFIG_USE_MUSL
   LDLIBS += tirpc
 endif
 endif
- 
+
 ifeq ($(BUILD_VARIANT),selinux)
   LDLIBS += selinux sepol
 endif
