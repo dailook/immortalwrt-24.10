@@ -60,7 +60,7 @@
   git pull
   ./scripts/feeds update -a
   ./scripts/feeds install -a
-  make defconfig
+  make menuconfig
   make download -j8
   make V=s -j$(nproc)
   ```
