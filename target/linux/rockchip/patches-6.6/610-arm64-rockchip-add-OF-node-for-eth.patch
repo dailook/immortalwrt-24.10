@@ -235,7 +235,7 @@ Signed-off-by: David Bauer <mail@david-bauer.net>
  	};
  };
  
- @@ -85,6 +106,25 @@
+@@ -85,6 +106,25 @@
  		reg = <0x1>;
  		pinctrl-0 = <&eth_phy1_reset_pin>;
  		pinctrl-names = "default";
