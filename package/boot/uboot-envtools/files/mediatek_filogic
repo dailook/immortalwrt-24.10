@@ -124,7 +124,7 @@ ikuai,q6000|\
 netcore,n60-pro-512rom|\
 netcore,n60-pro|\)
 	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
-	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000" "1"
+	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000"
 	;;
 mercusys,mr80x-v3|\
 mercusys,mr90x-v1|\
