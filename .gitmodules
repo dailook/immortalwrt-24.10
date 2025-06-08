@@ -1,0 +1,3 @@
+[submodule "package/luci-app-tailscale"]
+	path = package/luci-app-tailscale
+	url = https://github.com/asvow/luci-app-tailscale.git
