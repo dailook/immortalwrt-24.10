@@ -215,7 +215,5 @@
 };
 
 &wifi {
-	nvmem-cells = <&eeprom_factory_0>;
-	nvmem-cell-names = "eeprom";
 	status = "okay";
 };
