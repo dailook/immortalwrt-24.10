@@ -13,7 +13,6 @@
 		led-failsafe = &status_red_led;
 		led-running = &status_green_led;
 		led-upgrade = &status_blue_led;
-		label-mac-device = &gmac1;
 		serial0 = &uart0;
 	};
 
@@ -63,8 +62,6 @@
 };
 
 &eth {
-	pinctrl-names = "default";
-	pinctrl-0 = <&mdio_pins>;
 	status = "okay";
 
 	gmac0: mac@0 {
@@ -96,6 +93,40 @@
 		#interrupt-cells = <1>;
 		interrupt-parent = <&pio>;
 		interrupts = <38 IRQ_TYPE_LEVEL_HIGH>;
+	};
+};
+
+&switch {
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			label = "lan1";
+		};
+
+		port@1 {
+			reg = <1>;
+			label = "lan2";
+		};
+
+		port@2 {
+			reg = <2>;
+			label = "lan3";
+		};
+
+		port@6 {
+			reg = <6>;
+			ethernet = <&gmac0>;
+			phy-mode = "2500base-x";
+
+			fixed-link {
+				speed = <2500>;
+				full-duplex;
+				pause;
+			};
+		};
 	};
 };
 
@@ -169,40 +200,6 @@
 			partition@580000 {
 				label = "ubi";
 				reg = <0x580000 0x7200000>;
-			};
-		};
-	};
-};
-
-&switch {
-	ports {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		port@0 {
-			reg = <0>;
-			label = "lan1";
-		};
-
-		port@1 {
-			reg = <1>;
-			label = "lan2";
-		};
-
-		port@2 {
-			reg = <2>;
-			label = "lan3";
-		};
-
-		port@6 {
-			reg = <6>;
-			ethernet = <&gmac0>;
-			phy-mode = "2500base-x";
-
-			fixed-link {
-				speed = <2500>;
-				full-duplex;
-				pause;
 			};
 		};
 	};
