@@ -13,6 +13,8 @@
 		led-failsafe = &status_red_led;
 		led-running = &status_green_led;
 		led-upgrade = &status_blue_led;
+		label-mac-device = &gmac1;
+		serial0 = &uart0;
 	};
 
 	chosen {
@@ -23,7 +25,7 @@
                 reg = <0 0x40000000 0 0x10000000>;
         };
 
-        leds {
+        gpio-leds {
                 compatible = "gpio-leds";
 
                 status_red_led: led-0 {
