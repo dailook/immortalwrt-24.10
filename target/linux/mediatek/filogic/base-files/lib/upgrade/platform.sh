@@ -113,6 +113,12 @@ platform_do_upgrade() {
 		CI_UBIPART="ubi0"
 		nand_do_upgrade "$1"
 		;;
+	ruijie,rg-x60)
+		CI_UBIPART="ubi"
+		CI_KERNPART="kernel"
+		CI_ROOTPART="rootfs"
+		nand_do_upgrade "$1"
+		;;
 	acer,predator-w6|\
 	acer,predator-w6d|\
 	acer,vero-w6m|\
