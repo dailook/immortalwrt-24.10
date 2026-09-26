@@ -1,0 +1,2 @@
+Trigger Q30 Pro default WiFi build on 2026-09-13.
+This keeps the existing default WiFi first-boot behavior and uses the existing Q30 Pro iStore services workflow.

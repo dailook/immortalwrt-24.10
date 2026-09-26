@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+uci set network.lan.ipaddr='192.168.7.1'
+uci set network.lan.netmask='255.255.255.0'
+uci set system.@system[0].hostname='DulWiFi-Tk'
+uci set luci.main.mediaurlbase='/luci-static/argon'
+uci commit network
+uci commit system
+uci commit luci
+HASH="$(cat /etc/dulwifi-root.hash)"
+[ -n "$HASH" ]
+sed -i "s#^root:[^:]*:#root:${HASH}:#" /etc/shadow
+chmod 600 /etc/shadow
+rm -f /etc/dulwifi-root.hash
+/etc/init.d/dulwifi-firstboot enable
+exit 0

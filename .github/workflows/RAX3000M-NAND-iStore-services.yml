@@ -1,0 +1,250 @@
+name: CMCC RAX3000M NAND 5WiFi iStore services
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - jontaoNpS-rax3000m-nand-5wifi
+
+permissions:
+  contents: write
+
+env:
+  PASSWALL_TAG: 26.3.6-1
+  PASSWALL2_TAG: 26.3.5-1
+  PASSWALL_PACKAGES_COMMIT: 3e11c458c552aefd348232c627fd1ed9f8f08e41
+  HOMEPROXY_COMMIT: edece28a0085f36d469ec82c8d45f562f602db53
+  OPENCLASH_COMMIT: c3a33c1d3407956fdf8f0e0b7c1a4c52e6ad9593
+  NPC_VERSION: 0.26.10
+  LEAN_LUCI_COMMIT: 0fb07d4de6db4bae39cd5c6c399dec0f0dde3cc6
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Initialize environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang flex bison g++ gawk gcc-multilib gettext git libncurses-dev libssl-dev python3-setuptools rsync swig unzip zlib1g-dev file wget curl jq openssl ccache zstd
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /opt/hostedtoolcache/Ruby
+          sudo docker system prune -af >/dev/null 2>&1 || true
+          sudo apt-get clean
+          df -h /
+          echo "BUILD_DATE=$(date +'%Y.%m.%d-%H.%M.%S')" >> "$GITHUB_ENV"
+
+      - name: Install Go 1.24
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24.x
+          cache: false
+
+      - name: Verify RAX3000M NAND layout
+        run: |
+          DTS=target/linux/mediatek/dts/mt7981b-cmcc-rax3000m.dts
+          test -s "$DTS"
+          grep -q 'compatible = "cmcc,rax3000m", "mediatek,mt7981"' "$DTS"
+          grep -q 'label = "ubi"' "$DTS"
+          sed -n '/^define Device\/cmcc_rax3000m$/,/^endef$/p' target/linux/mediatek/image/filogic.mk | grep -q 'IMAGE_SIZE := 116736k'
+          grep -q 'TARGET_DEVICES += cmcc_rax3000m' target/linux/mediatek/image/filogic.mk
+
+      - name: Update feeds and add application sources
+        run: |
+          cat >> feeds.conf.default <<'FEEDS'
+          src-git istore https://github.com/linkease/istore.git;main
+          src-git nas_packages https://github.com/linkease/nas-packages.git;master
+          src-git nas_luci https://github.com/linkease/nas-packages-luci.git;main
+          FEEDS
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          ./scripts/feeds install -d y -p istore luci-app-store
+          ./scripts/feeds install -d y -p nas_packages quickstart
+          ./scripts/feeds install -d y -p nas_luci luci-app-quickstart
+          rm -rf package/luci-app-passwall package/luci-app-passwall2 package/passwall-packages
+          git clone --depth=1 --branch "$PASSWALL_TAG" https://github.com/Openwrt-Passwall/openwrt-passwall.git /tmp/passwall
+          mv /tmp/passwall/luci-app-passwall package/
+          git clone --depth=1 --branch "$PASSWALL2_TAG" https://github.com/Openwrt-Passwall/openwrt-passwall2.git /tmp/passwall2
+          mv /tmp/passwall2/luci-app-passwall2 package/
+          git clone https://github.com/Openwrt-Passwall/openwrt-passwall-packages.git package/passwall-packages
+          git -C package/passwall-packages checkout "$PASSWALL_PACKAGES_COMMIT"
+          rm -rf package/passwall-packages/.git
+          rm -rf package/homeproxy package/luci-app-homeproxy
+          git clone https://github.com/immortalwrt/homeproxy.git package/homeproxy
+          git -C package/homeproxy checkout "$HOMEPROXY_COMMIT"
+          rm -rf package/homeproxy/.git
+          rm -rf package/luci-app-openclash
+          OPENCLASH_TMP="$(mktemp -d)"
+          curl --fail --location --show-error --silent \
+            --connect-timeout 30 --max-time 300 \
+            --retry 5 --retry-all-errors --retry-delay 10 --retry-max-time 1800 \
+            "https://codeload.github.com/vernesong/OpenClash/tar.gz/${OPENCLASH_COMMIT}" \
+            --output "$OPENCLASH_TMP/source.tar.gz"
+          tar -xzf "$OPENCLASH_TMP/source.tar.gz" -C "$OPENCLASH_TMP"
+          test -s "$OPENCLASH_TMP/OpenClash-${OPENCLASH_COMMIT}/luci-app-openclash/Makefile"
+          cp -a "$OPENCLASH_TMP/OpenClash-${OPENCLASH_COMMIT}/luci-app-openclash" package/
+          rm -rf package/npc package/luci-app-nps package/luci-app-npc package/feeds/luci/luci-app-nps
+          git init /tmp/lean-luci
+          git -C /tmp/lean-luci remote add origin https://github.com/coolsnowwolf/luci.git
+          git -C /tmp/lean-luci sparse-checkout init --cone
+          git -C /tmp/lean-luci sparse-checkout set applications/luci-app-nps
+          git -C /tmp/lean-luci fetch --depth=1 origin "$LEAN_LUCI_COMMIT"
+          git -C /tmp/lean-luci checkout --detach FETCH_HEAD
+          cp -a /tmp/lean-luci/applications/luci-app-nps package/
+          sed -i 's#include ../../luci.mk#include $(TOPDIR)/feeds/luci/luci.mk#' package/luci-app-nps/Makefile
+          sed -i 's/+npc//g' package/luci-app-nps/Makefile
+          sed -i -E 's/server\.datatype[[:space:]]*=[[:space:]]*"ipaddr"/server.datatype="host"/' package/luci-app-nps/luasrc/model/cbi/nps.lua
+          NPC_TMP="$(mktemp -d)"
+          curl --fail --location --show-error --silent \
+            --connect-timeout 30 --max-time 300 \
+            --retry 5 --retry-all-errors --retry-delay 10 --retry-max-time 1800 \
+            "https://github.com/ehang-io/nps/releases/download/v${NPC_VERSION}/linux_arm64_client.tar.gz" \
+            --output "$NPC_TMP/linux_arm64_client.tar.gz"
+          tar -xzf "$NPC_TMP/linux_arm64_client.tar.gz" -C "$NPC_TMP"
+          test -s "$NPC_TMP/npc"
+          mkdir -p files/usr/bin
+          install -m 0755 "$NPC_TMP/npc" files/usr/bin/npc
+          file files/usr/bin/npc | grep -Eq 'ARM aarch64|ARM64'
+          rm -rf package/luci-theme-argon package/luci-app-argon-config
+          git clone --depth=1 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
+          git clone --depth=1 https://github.com/jerrykuku/luci-app-argon-config.git package/luci-app-argon-config
+          rm -rf feeds/nas_packages/network/services/librespeed-cli feeds/nas_packages/network/services/librespeed-cli-rust feeds/nas_packages/libs/librespeed-common package/feeds/nas_packages/librespeed-cli package/feeds/nas_packages/librespeed-cli-rust package/feeds/nas_packages/librespeed-common tmp
+
+      - name: Configure RAX3000M NAND and first-boot defaults
+        run: |
+          cat > .config <<'CONFIG'
+          CONFIG_TARGET_mediatek=y
+          CONFIG_TARGET_mediatek_filogic=y
+          CONFIG_TARGET_mediatek_filogic_DEVICE_cmcc_rax3000m=y
+          CONFIG_PACKAGE_luci=y
+          CONFIG_LUCI_LANG_zh_Hans=y
+          CONFIG_PACKAGE_luci-app-store=y
+          CONFIG_PACKAGE_luci-app-quickstart=y
+          CONFIG_PACKAGE_quickstart=y
+          CONFIG_PACKAGE_luci-theme-argon=y
+          CONFIG_PACKAGE_luci-app-argon-config=y
+          CONFIG_PACKAGE_luci-app-ttyd=y
+          CONFIG_PACKAGE_ttyd=y
+          CONFIG_PACKAGE_luci-app-passwall=y
+          CONFIG_PACKAGE_luci-app-passwall2=y
+          CONFIG_PACKAGE_luci-app-homeproxy=y
+          CONFIG_PACKAGE_luci-app-openclash=y
+          CONFIG_PACKAGE_luci-app-nps=y
+          # CONFIG_PACKAGE_luci-app-npc is not set
+          CONFIG_PACKAGE_luci-app-filemanager=y
+          CONFIG_PACKAGE_luci-app-upnp=y
+          CONFIG_PACKAGE_luci-app-wol=y
+          CONFIG_PACKAGE_luci-app-samba4=y
+          CONFIG_PACKAGE_luci-app-sqm=y
+          CONFIG_PACKAGE_luci-app-statistics=y
+          CONFIG_PACKAGE_curl=y
+          CONFIG_PACKAGE_ip-full=y
+          CONFIG_PACKAGE_ca-certificates=y
+          CONFIG_PACKAGE_kmod-tun=y
+          CONFIG_PACKAGE_firewall4=y
+          CONFIG_PACKAGE_nftables=y
+          CONFIG_PACKAGE_iptables-nft=y
+          CONFIG_PACKAGE_ip6tables-nft=y
+          CONFIG_PACKAGE_xtables-nft=y
+          CONFIG_PACKAGE_iptables-mod-tproxy=y
+          CONFIG_PACKAGE_kmod-nft-socket=y
+          CONFIG_PACKAGE_kmod-nft-tproxy=y
+          CONFIG_PACKAGE_dnsmasq-full=y
+          # CONFIG_CCACHE is not set
+          CONFIG
+          make defconfig
+          mkdir -p files/etc
+          openssl passwd -1 '@password@' > files/etc/dulwifi-root.hash
+          cp package/base-files/files/etc/shadow files/etc/shadow
+          HASH="$(cat files/etc/dulwifi-root.hash)"
+          sed -i "s#^root:[^:]*:#root:${HASH}:#" files/etc/shadow
+          chmod 600 files/etc/shadow files/etc/dulwifi-root.hash
+          chmod 755 files/etc/uci-defaults/99-zz-dulwifi files/etc/init.d/dulwifi-firstboot files/usr/libexec/dulwifi-firstboot
+          sh -n files/etc/uci-defaults/99-zz-dulwifi
+          sh -n files/usr/libexec/dulwifi-firstboot
+          grep -Fq "ssid='A-2.4G'" files/usr/libexec/dulwifi-firstboot
+          grep -Fq "ssid='A-5G'" files/usr/libexec/dulwifi-firstboot
+          grep -Fq 'for i in 1 2 3 4 5; do' files/usr/libexec/dulwifi-firstboot
+          grep -q 'LUCI_DEPENDS.*wget' package/luci-app-nps/Makefile
+          ! grep -q '+npc' package/luci-app-nps/Makefile
+          test -x files/usr/bin/npc
+          file files/usr/bin/npc | grep -Eq 'ARM aarch64|ARM64'
+          grep -Eq 'server\.datatype[[:space:]]*=[[:space:]]*"host"' package/luci-app-nps/luasrc/model/cbi/nps.lua
+          grep -Fq "server_addr='nps.jontao.top'" files/usr/libexec/dulwifi-firstboot
+          for config in passwall passwall2; do
+            test -s "files/etc/config/$config"
+            [ "$(grep -c '^config acl_rule' "files/etc/config/$config")" -eq 5 ]
+            for i in 1 2 3 4 5; do
+              grep -A12 "option remarks 'A$i'" "files/etc/config/$config" | grep -Fq "option sources '172.16.$i.0/24'"
+            done
+            for i in 6 7 8 9 10; do
+              ! grep -Fq "option remarks 'A$i'" "files/etc/config/$config"
+            done
+          done
+          ./scripts/diffconfig.sh | tee RAX3000M-NAND-final.config
+
+      - name: Restore download cache
+        id: downloads
+        uses: actions/cache/restore@v4
+        with:
+          path: dl
+          key: rax3000m-nand-downloads-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            rax3000m-nand-downloads-v1-
+
+      - name: Download and compile
+        run: |
+          make download -j"$(nproc)"
+          find dl -type f -size -1024c -print -delete
+          rm -rf feeds/*/.git package/*/.git package/*/*/.git dl/go-mod-cache
+          mkdir -p dl/go-mod-cache
+          df -h /
+          make -j"$(nproc)" || { df -h /; make -j1 V=s; }
+
+      - name: Save download cache even after failure
+        if: ${{ always() && steps.downloads.outcome == 'success' }}
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: dl
+          key: ${{ steps.downloads.outputs.cache-primary-key }}
+
+      - name: Verify and collect
+        run: |
+          mkdir -p upload
+          mapfile -t images < <(find bin/targets/mediatek/filogic -maxdepth 1 -type f \( -iname '*cmcc_rax3000m*factory.bin' -o -iname '*cmcc_rax3000m*sysupgrade.bin' \) -size +5M)
+          [ "${#images[@]}" -gt 0 ]
+          mapfile -t manifests < <(find bin/targets/mediatek/filogic -maxdepth 1 -type f -iname '*cmcc_rax3000m*.manifest')
+          [ "${#manifests[@]}" -gt 0 ]
+          for package in luci-app-store luci-app-quickstart luci-theme-argon luci-app-ttyd luci-app-passwall luci-app-passwall2 luci-app-homeproxy luci-app-openclash luci-app-nps firewall4 iptables-nft ip6tables-nft xtables-nft iptables-mod-tproxy; do
+            grep -q "^${package} " "${manifests[0]}" || { echo "ERROR: ${package} missing"; exit 1; }
+          done
+          cp -a "${images[@]}" "${manifests[@]}" RAX3000M-NAND-final.config upload/
+          sha256sum upload/* | tee upload/SHA256SUMS
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: RAX3000M-NAND-5WiFi-${{ env.BUILD_DATE }}
+          name: CMCC RAX3000M NAND 5WiFi ${{ env.BUILD_DATE }}
+          files: upload/*
+          body: |
+            CMCC RAX3000M NAND / MT7981 / DulWiFi custom build with fw4/nftables plus iptables-nft compatibility.
+            Management: 192.168.7.1/@password@. Main WiFi: A-2.4G and A-5G, password a1111111. Additional 5GHz WiFi: A1-A5, password a1111111, isolated networks 172.16.1.0/24 through 172.16.5.0/24 with no WAN forwarding. Supplied PassWall and PassWall2 ACL templates are installed into /etc/config.
+            NPS server: nps.jontao.top:8024; NPC is ehang-io/nps 0.26.10 (Core 0.26.0); first boot writes the uppercase physical WAN MAC without colons to vkey.
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: RAX3000M-NAND-5WiFi-${{ env.BUILD_DATE }}
+          path: upload/*
+          if-no-files-found: error
+          retention-days: 30
+

@@ -1,0 +1,152 @@
+#!/bin/sh
+set -e
+[ -e /etc/dulwifi-firstboot.done ] && exit 0
+sleep 60
+(
+if [ ! -e /etc/dulwifi-wifi.done ]; then
+    tries=0
+    while :; do
+        R2=''; R5=''
+        for radio in $(uci -q show wireless | sed -n 's/^wireless\.\([^=]*\)=wifi-device$/\1/p'); do
+            band="$(uci -q get wireless.$radio.band || true)"
+            hw="$(uci -q get wireless.$radio.hwmode || true)"
+            case "$band:$hw" in 2g:*|*:11g) R2="$radio";; 5g:*|*:11a) R5="$radio";; esac
+        done
+        [ -n "$R2" ] && [ -n "$R5" ] && break
+        tries=$((tries+1))
+        [ "$tries" -lt 60 ] || { logger -t dulwifi 'Both wireless radios not ready; retry next boot'; exit 1; }
+        sleep 2
+    done
+
+    for iface in $(uci -q show wireless | sed -n 's/^wireless\.\([^=]*\)=wifi-iface$/\1/p'); do
+        radio="$(uci -q get wireless.$iface.device || true)"
+        case "$radio" in
+            "$R2") ssid='A-2.4G';;
+            "$R5") ssid='A-5G';;
+            *) continue;;
+        esac
+        uci set wireless.$iface.ssid="$ssid"
+        uci set wireless.$iface.encryption=psk2+ccmp
+        uci set wireless.$iface.key=a1111111
+        uci set wireless.$iface.disabled=0
+        uci set wireless.$radio.disabled=0
+    done
+    for i in 1 2 3 4 5 6 7 8 9 10; do
+        n="tk$i"
+        uci -q delete wireless.$n || true
+        uci -q delete network.$n || true
+        uci -q delete network.${n}_dev || true
+        uci -q delete dhcp.$n || true
+        uci -q delete firewall.$n || true
+        uci -q delete firewall.${n}_dhcp || true
+    done
+
+    for i in 1 2 3 4 5; do
+        n="tk$i"
+        radio="$R5"
+
+        uci set network.${n}_dev=device
+        uci set network.${n}_dev.name="br-$n"
+        uci set network.${n}_dev.type=bridge
+        uci set network.${n}_dev.bridge_empty=1
+        uci set network.${n}_dev.ipv6=0
+
+        uci set network.$n=interface
+        uci set network.$n.device="br-$n"
+        uci set network.$n.proto=static
+        uci set network.$n.ipaddr="172.16.$i.1"
+        uci set network.$n.netmask=255.255.255.0
+        uci set network.$n.delegate=0
+
+        uci set dhcp.$n=dhcp
+        uci set dhcp.$n.interface="$n"
+        uci set dhcp.$n.start=100
+        uci set dhcp.$n.limit=100
+        uci set dhcp.$n.leasetime=12h
+        uci set dhcp.$n.ra=disabled
+        uci set dhcp.$n.dhcpv6=disabled
+        uci set dhcp.$n.ndp=disabled
+        uci -q delete dhcp.$n.dhcp_option || true
+        uci add_list dhcp.$n.dhcp_option="6,172.16.$i.1"
+
+        uci set wireless.$n=wifi-iface
+        uci set wireless.$n.device="$radio"
+        uci set wireless.$n.network="$n"
+        uci set wireless.$n.mode=ap
+        uci set wireless.$n.ssid="A$i"
+        uci set wireless.$n.encryption=psk2+ccmp
+        uci set wireless.$n.key=a1111111
+        uci set wireless.$n.isolate=1
+        uci set wireless.$n.disabled=0
+        uci set wireless.$radio.disabled=0
+
+        uci set firewall.$n=zone
+        uci set firewall.$n.name="$n"
+        uci -q delete firewall.$n.network || true
+        uci add_list firewall.$n.network="$n"
+        uci set firewall.$n.input=ACCEPT
+        uci set firewall.$n.output=ACCEPT
+        uci set firewall.$n.forward=REJECT
+        uci set firewall.$n.masq=0
+        uci set firewall.$n.mtu_fix=0
+
+        uci set firewall.${n}_dhcp=rule
+        uci set firewall.${n}_dhcp.name="TK$i DHCP"
+        uci set firewall.${n}_dhcp.src="$n"
+        uci set firewall.${n}_dhcp.proto=udp
+        uci set firewall.${n}_dhcp.dest_port=67
+        uci set firewall.${n}_dhcp.family=ipv4
+        uci set firewall.${n}_dhcp.target=ACCEPT
+    done
+
+    uci set firewall.@defaults[0].flow_offloading=0
+    uci set firewall.@defaults[0].flow_offloading_hw=0
+    for cfg in network wireless dhcp firewall; do uci commit "$cfg"; done
+    /etc/init.d/firewall reload || true
+    /etc/init.d/network reload || true
+    sleep 5
+    /etc/init.d/dnsmasq restart || true
+    wifi reload || true
+    touch /etc/dulwifi-wifi.done
+fi
+) || logger -t dulwifi '5WiFi setup incomplete; continuing NPS setup'
+sed -i 's/server.datatype = "ipaddr"/server.datatype = "host"/' /usr/lib/lua/luci/model/cbi/nps.lua
+valid_mac() {
+    printf '%s\n' "$1" | grep -Eq '^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$' &&
+        [ "$1" != '00:00:00:00:00:00' ] && [ "$1" != 'ff:ff:ff:ff:ff:ff' ]
+}
+mac=''
+tries=0
+while ! valid_mac "$mac"; do
+    dev="$(uci -q get network.wan.device || uci -q get network.wan.ifname || true)"
+    case "$dev" in @*) dev="$(uci -q get network.${dev#@}.device || true)";; esac
+    [ -n "$dev" ] || dev="$(ip route | awk '/default/ {print $5; exit}')"
+    if [ -r "/sys/class/net/$dev/address" ]; then mac="$(cat "/sys/class/net/$dev/address")"; fi
+    if ! valid_mac "$mac"; then
+        for lower in /sys/class/net/"$dev"/lower_*; do
+            [ -r "$lower/address" ] || continue
+            mac="$(cat "$lower/address")"
+            valid_mac "$mac" && break
+        done
+    fi
+    valid_mac "$mac" && break
+    tries=$((tries+1))
+    [ "$tries" -lt 60 ] || { logger -t dulwifi 'WAN MAC unavailable; retry next boot'; exit 1; }
+    sleep 2
+done
+[ -f /etc/config/nps ] && [ -x /etc/init.d/nps ]
+uci -q get nps.@nps[0] >/dev/null || uci add nps nps >/dev/null
+uci set nps.@nps[0].enabled='1'
+uci set nps.@nps[0].server_addr='nps.jontao.top'
+uci set nps.@nps[0].server_port='8024'
+uci set nps.@nps[0].protocol='tcp'
+uci set nps.@nps[0].compress='1'
+uci set nps.@nps[0].crypt='1'
+uci set nps.@nps[0].vkey="$(printf '%s' "$mac" | tr -d ':' | tr '[:lower:]' '[:upper:]')"
+uci commit nps
+mkdir -p /tmp/etc
+/etc/init.d/nps enable
+/etc/init.d/nps restart
+[ -e /etc/dulwifi-wifi.done ] || exit 1
+touch /etc/dulwifi-firstboot.done
+logger -t dulwifi '5WiFi and NPS first-boot configuration complete'
